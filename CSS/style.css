@@ -1,4 +1,4 @@
-------------------------2026年3月4日-------------------------
+/*------------------------2026年3月4日-------------------------*/
 *{
     margin:0;
     padding:0;
@@ -21,9 +21,10 @@ body{
     margin:0 auto;
     padding:0 20px;
 }
-----------------------2026年3月9日-----------------------------
+/*----------------------2026年3月9日-----------------------------*/
 header{
-    background:linear-gradient(to right,blue,green);
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url('../Picture/header-pic.jpeg') center/cover no-repeat;
     padding: 20px 0;
     text-align: center;
     color:white;
@@ -65,10 +66,22 @@ header{
     }
     .logo{
         font-size:1.5rem;
-        color:darkgreen;
+        color:black;
         text-decoration:none;
         padding: 10px 15px;
         transition: background-color 0.3s ease;
+    }
+    .logo > a{
+        color:black;
+        text-decoration:none;
+    }
+    .logo:hover {
+        color:darkgreen;
+        transform:scale(1.2);
+    }
+    .logo:hover a{
+        color:darkgreen;
+        text-decoration:none;
     }
     .nav-links {
         list-style: none;
@@ -83,6 +96,13 @@ header{
         text-decoration: none;
         padding: 10px 15px;
         display: block;
+    }
+    .nav-links > li > a:hover  {
+        color:chocolate;
+        text-decoration:none;
+    }
+    .nav-links >li >a:hover{
+        transform:scale(1.2);
     }
     .subnav-links-yanjiusheng{
         position:absolute;
@@ -157,6 +177,12 @@ main{
         margin-bottom:20px;
         padding-bottom: 10px;
         border-bottom: 2px solid #333;
+    }
+    
+
+    .recent-files .fas.fa-file-pdf{
+        color:#e74c3c;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
     .file-list{
         list-style:none;
@@ -238,4 +264,14 @@ footer{
         text-decoration:wavy;
         text-decoration-color:chocolate;
         transition:color 0.3s;
+    }
+    /*-------------------2026年3月10日----------------------*/
+    i[class^="fa-"] {
+        transition: all 0.3s ease;
+    }
+    a i, .logo i{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right:8px;
     }
