@@ -203,6 +203,52 @@ main{
         color:chocolate;
         text-decoration:none;
     }
+    /*-----2026年3月27日新加，主要是vue的一些配套--------*/
+    .file-info{
+        display:flex;
+        align-items:center;
+        gap:15px;
+        flex:1;
+        min-width:0;
+    }
+    .file-info i{
+        font-size:1.5em;
+        width:30px;
+        text-align:center;
+    }
+    .file-name{
+        font-size:1.1rem;
+        font-weight:500;
+        white-space: nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        max-width:400px;
+    }
+    .file-meta{
+        display:flex;
+        align-items:center;
+        gap:20px;
+        font-size:0.9rem;
+        flex-shrink:0;
+    }
+    .file-date{
+        padding:4px 10px;
+        border-radius:12px;
+        font-size:0.85rem;
+        font-weight:500;
+        min-width:100px;
+        text-align:center;
+    }
+    .file-size{
+        padding:4px 10px;
+        border-radius:12px;
+        font-size:0.85rem;
+        font-weight:500;
+        min-width:70px;
+        text-align:center;
+    }
+ /*-----------------------------------------------------*/
+
 
 footer::before{
     content:'';
@@ -276,4 +322,26 @@ footer{
         margin-right:8px;
     }
     /*-----------------2026年3月16日--------------------*/
-    
+        @media (max-width:768px){
+        .file-item {
+            flex-direction:column;
+            align-items: flex-start;
+            gap:10px;
+        }
+        .file-meta{
+            align-self:flex-end;
+        }
+        .file-name{
+            max-width:300px;
+        }
+    }
+    @media (max-width:400px){
+        .file-name{
+            max-width:200px;
+        }
+        .file-meta{
+            flex-direction:column;
+            gap:8px;
+            align-items: flex-start;
+        }
+    }

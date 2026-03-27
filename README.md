@@ -14,3 +14,6 @@ gantt
     footer 图片/模糊、子页面完善       :active, 2026-03-17, 5d
     workflows 自动扫描更新            :2026-03-18, 7d
     JS 文件排序与前端嵌入            :2026-03-20, 7d
+    Jscript的vue的初步尝试          :2026-03-27,7d
+    前端调用Github的仓库API并实现自动化获取文件file.json  :2026-04-11
+    

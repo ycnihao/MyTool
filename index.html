@@ -4,78 +4,123 @@
         <meta charset="utf-8">
         <title>My_tool_website</title>
         <link rel="stylesheet" href="CSS/style.css">
-        <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> 
         <link rel="icon" href="favicon.ico" type="image/x-icon">
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     </head>
     <body>
-        <header>
-        <h1>一个简单的工具网站</h1>
-        <p>主要是为了方便我从网上下载一些必要的文档</p>
-        </header>
-        <nav class="navbar">
-            <div class="container">
-                <div class="logo">
-                    <i class="fas fa-download"></i>
-                    <a href="/Picture/URL.png">下载</a>
-                </div>
-                <ul class="nav-links">
-                    <li><a href="#">
-                        <i class="fas fa-graduation-cap"></i> 研究生学业</a>
-                        <ul class="subnav-links-yanjiusheng">
-                            <li><a href="Pages/Maths.html">数学</a></li>
-                            <li><a href="Pages/Mechanics.html">力学</a></li>
-                            <li><a href="Pages/Control.html">控制</a></li>
-                            <li><a href="Pages/Mechanical.html">机械</a></li>
-                        </ul>
-                    </li>
+        <div id="app">
+            <header>
+            <h1>一个简单的工具网站</h1>
+            <p>主要是为了方便我从网上下载一些必要的文档</p>
+            </header>
+            <nav class="navbar">
+                <div class="container">
+                    <div class="logo">
+                        <i class="fa-solid fa-download"></i>
+                        <a href="/Picture/URL.png">下载</a>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="#">
+                            <i class="fa-solid fa-graduation-cap"></i> 研究生学业</a>
+                            <ul class="subnav-links-yanjiusheng">
+                                <li><a href="Pages/Maths.html">数学</a></li>
+                                <li><a href="Pages/Mechanics.html">力学</a></li>
+                                <li><a href="Pages/Control.html">控制</a></li>
+                                <li><a href="Pages/Mechanical.html">机械</a></li>
+                            </ul>
+                        </li>
 
-                    <li><a href="#">
-                        <i class="fas fa-laptop-code"></i> 技能扩展</a>
-                        <ul class="sub-links-aihao">
-                            <li><a href="Pages/Computer.html">计算机技术</a></li>
-                            <li><a href="Pages/English.html">英语</a></li>
+                        <li><a href="#">
+                            <i class="fa-solid fa-laptop-code"></i> 技能扩展</a>
+                            <ul class="sub-links-aihao">
+                                <li><a href="Pages/Computer.html">计算机技术</a></li>
+                                <li><a href="Pages/English.html">英语</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <main>
+                <div class="main-content"><!--2026年3月27日新加的，原本main只有recent-file这一个，但是为了同时左右展示，所以加了一个大容器，然后让日志与最近的文件并列-->
+                    <section class="recent-files">
+                        <h2>最近的更新的文件
+                        <i class="fa-regular fa-file-pdf" style="color: rgb(199, 20, 39);"></i>
+                        </h2>
+                        <div class="sort-controls">
+                            <button @click="sortByDateDesc" :class="{ active: sortOrder === 'date-desc'}">
+                                <i class="fa-solid fa-arrow-down-short-wide" style="color: rgb(240, 154, 6);"></i> 最新
+                                </button>
+                        </div>
+
+                        <ul class="file-list">
+                            <li v-for="file in files" :key="file.id">
+                                <a :href="file.url" target="_blank" class="file-item">
+                                    <div class="file-info">
+                                        <i  :class="getFileIcon(file)"
+                                            :style="{color: getIconColor(file)}">
+                                        </i>
+                                            <span class="file-name">{{ file.name }}</span>
+                                    </div>
+                                    <div class="file-meta">
+                                        <span class="file-date">{{ formatDate(file.date) }}</span>
+                                        <span class="file-size" v-if="file.size">{{ file.size }}</span>
+                                    </div>
+                                </a>
+                            </li>
                         </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <main>
-            <section class="recent-files">
-                <h2>最近的更新的文件
-                <i class="fas fa-file-pdf"></i>
-                </h2>
-                <ul class="file-list">
-                    <li><a href="https://github.com/ycnihao/MyTool/releases/download/v0.1/HELLO.WORLD.pdf">测试PDF文件</a></li>
-                </ul>
-            </section>
-        </main>
-        <footer class="site-footer">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h4>快速链接</h4>
-                    <ul>
-                        <li><a href="/">
-                            <i class="fas fa-home"></i>首页</a></li>
-                        <li><a href="/log/Changelog.md" target="_blank">
-                            <i class="fas fa-history"></i>更新日志</a></li>
-                    </ul>
+                        <button @click="refreshFiles">刷新</button>
+                    </section>
+                <!--    <section class="changelog-viewer">
+                        <div class="changelog-header">
+                            <h2>更新日志
+                                <i class="fa-solid fa-book-open-reader " style="color: rgb(15, 172, 207);"></i>
+                            </h2>
+                            <div class="changelog-controls">
+                                <a href="/Log/Changelog.md" target="_blank" class="raw-link">
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="changelogHtml"
+                            class="markdown-content"
+                            v-html="changelogHtml">
+                        </div>
+                    </section> -->
                 </div>
-                <div class="footer-column">
-                    <h4>友情链接</h4>
-                    <ul>
-                        <li><a href="https://www.sspu.edu.cn/" target="_blank">
-                            <i class="fas fa-university"></i>上海第二工业大学</a></li>
-                        <li><a href="https://www.github.com/" target="_blank">
-                            <i class="fab fa-github"></i>GitHub</a></li>
-                        <li><a href="https://www.gitee.com/" target="_blank">
-                            <i class="fab fa-git-alt"></i>Gitee</a></li>
-                    </ul>
+            </main>
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h4>快速链接</h4>
+                        <ul>
+                            <li><a href="/">
+                                <i class="fa-solid fa-home"></i>首页</a></li>
+                            <li><a href="/log/Changelog.md" target="_blank">
+                                <i class="fa-solid fa-history"></i>更新日志</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>友情链接</h4>
+                        <ul>
+                            <li><a href="https://www.sspu.edu.cn/" target="_blank">
+                                <i class="fa-solid fa-university"></i>上海第二工业大学</a></li>
+                            <li><a href="https://www.github.com/" target="_blank">
+                                <i class="fa-brands fa-github"></i>GitHub</a></li>
+                            <li><a href="https://www.gitee.com/" target="_blank">
+                                <i class="fa-brands fa-git-alt"></i>Gitee</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>来自<a href="" target="_blank">
-                    <i class="fa-solid fa-fan"></i>作者</a></p>
-            </div>
-        </footer>
+                <div class="footer-bottom">
+                    <p>来自<a href="" target="_blank">
+                        <i class="fa-solid fa-fan fa-spin"
+                            ></i>作者</a></p>
+                </div>
+            </footer>
+        </div>
+        <script
+            src="JS/app.js">
+        </script>
     </body>
 </html>
