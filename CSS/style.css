@@ -162,91 +162,250 @@ header{
 main{
     padding: 40px 20px;
     min-height: 400px;
+    gap:10px;
     flex:1;
+    display:flex;
+    flex-direction:column;
 }
-
-    .recent-files{
-        background:transparent;
-        padding: 30px;
-        border-radius: 8px;
-        max-width: 800px;
-        margin:0 auto;
-    }
-    .recent-files h2{
-        color:black;
-        margin-bottom:20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #333;
-    }
     
+    .main-content{
+        display:flex;
+        gap: 20px;
+    }
+        .recent-files{
+            background:transparent;
+            padding: 30px;
+            border-radius: 8px;
+            flex: 7; /* 70% */
+        }
+        .recent-files h2{
+            color:black;
+            margin-bottom:20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .changelog-header h2{
+            color:black;
+            margin-bottom:20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        
 
-    .recent-files .fas.fa-file-pdf{
-        color:#e74c3c;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        .recent-files .fas.fa-file-pdf{
+            color:#e74c3c;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .file-list{
+            list-style:none;
+        }
+        .file-list li{
+            padding:12px 0;
+            border-bottom: none;
+        }
+        .file-list a{
+            color:black;
+            text-decoration:none;
+            font-size:1.1rem;
+            display:flex;
+            align-items:center;
+            transition:color 0.3s ease;
+        }
+        .file-list a:hover{
+            color:chocolate;
+            text-decoration:none;
+        }
+        /*-----2026年3月27日新加，主要是vue的一些配套--------*/
+        .file-info{
+            display:flex;
+            align-items:center;
+            gap:15px;
+            flex:1;
+            min-width:0;
+        }
+        .file-info i{
+            font-size:1.5em;
+            width:30px;
+            text-align:center;
+        }
+        .file-name{
+            font-size:1.1rem;
+            font-weight:500;
+            white-space: nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            max-width:400px;
+        }
+        .file-meta{
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:0.9rem;
+            flex-shrink:0;
+        }
+        .file-date{
+            padding:4px 10px;
+            border-radius:12px;
+            font-size:0.85rem;
+            font-weight:500;
+            min-width:100px;
+            text-align:center;
+        }
+        .file-size{
+            padding:4px 10px;
+            border-radius:12px;
+            font-size:0.85rem;
+            font-weight:500;
+            min-width:70px;
+            text-align:center;
+        }
+
+        .changelog-viewer{
+            flex: 3; /* 30% */
+            padding: 30px;
+            border-radius: 8px;
+        }
+        .changelog-viewer .markdown-content{
+            font-size:0.85rem;
+            line-height: 1.5;
+        }
+        
+        .changelog-header h2{
+            font-size: 1.2rem;
+        }
+                    /* 分页组件样式 */
+            .pagination-info {
+                font-size: 0.9rem;
+                color: #666;
+                margin-top: 5px;
+                text-align: center;
+            }
+
+            .pagination-container {
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .pagination {
+                display: flex;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                gap: 5px;
+            }
+
+            .page-item {
+                margin: 0 2px;
+            }
+
+            .page-item a {
+                display: block;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                color: #333;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                background-color: white;
+                min-width: 40px;
+                text-align: center;
+            }
+
+            .page-item a:hover {
+                background-color: #f5f5f5;
+                border-color: #ccc;
+            }
+
+            .page-item.active a {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+
+            .page-item.disabled a {
+                color: #999;
+                cursor: not-allowed;
+                background-color: #f8f9fa;
+            }
+
+            .page-item.disabled a:hover {
+                background-color: #f8f9fa;
+                border-color: #ddd;
+            }
+
+            /* 更新日志条目样式 */
+            .changelog-entry {
+                margin-bottom: 20px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .changelog-entry:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .loading, .no-entries {
+                text-align: center;
+                padding: 40px;
+                color: #666;
+                font-style: italic;
+            }
+
+            /* 响应式设计 */
+            @media (max-width: 768px) {
+                .pagination {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+                
+                .page-item a {
+                    padding: 6px 10px;
+                    min-width: 36px;
+                    font-size: 0.9rem;
+                }
+                
+                .pagination-info {
+                    font-size: 0.8rem;
+                }
+            }
+
+            /* 移动设备响应式布局 */
+            @media (max-width: 992px) {
+                .main-content {
+                    flex-direction: column;
+                }
+                
+                .recent-files,
+                .changelog-viewer {
+                    flex: 1;
+                    width: 100%;
+                }
+                
+                .changelog-viewer .markdown-content {
+                    font-size: 0.9rem;
+                }
+            }
+
+
+    .main-development{
+        padding:30px;
+        width:100%;
     }
-    .file-list{
-        list-style:none;
-    }
-    .file-list li{
-        padding:12px 0;
-        border-bottom: none;
-    }
-    .file-list a{
-        color:black;
-        text-decoration:none;
-        font-size:1.1rem;
-        display:flex;
-        align-items:center;
-        transition:color 0.3s ease;
-    }
-    .file-list a:hover{
-        color:chocolate;
-        text-decoration:none;
-    }
-    /*-----2026年3月27日新加，主要是vue的一些配套--------*/
-    .file-info{
-        display:flex;
-        align-items:center;
-        gap:15px;
-        flex:1;
-        min-width:0;
-    }
-    .file-info i{
-        font-size:1.5em;
-        width:30px;
-        text-align:center;
-    }
-    .file-name{
-        font-size:1.1rem;
-        font-weight:500;
-        white-space: nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        max-width:400px;
-    }
-    .file-meta{
-        display:flex;
-        align-items:center;
-        gap:20px;
-        font-size:0.9rem;
-        flex-shrink:0;
-    }
-    .file-date{
-        padding:4px 10px;
-        border-radius:12px;
-        font-size:0.85rem;
-        font-weight:500;
-        min-width:100px;
-        text-align:center;
-    }
-    .file-size{
-        padding:4px 10px;
-        border-radius:12px;
-        font-size:0.85rem;
-        font-weight:500;
-        min-width:70px;
-        text-align:center;
-    }
+        .main-development .markdown-content .mermaid svg {
+            background: transparent !important;
+        }
+        .markdown-body pre {
+            background:transparent !important;
+            box-shadow:none !important;
+            padding:0 !important;
+        }
+
  /*-----------------------------------------------------*/
 
 

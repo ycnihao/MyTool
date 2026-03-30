@@ -6,8 +6,12 @@
         <link rel="stylesheet" href="CSS/style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> 
         <link rel="icon" href="favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://unpkg.com/vuejs-paginate-next@latest/dist/vuejs-paginate-next.umd.js"></script>
+
     </head>
     <body>
         <div id="app">
@@ -72,21 +76,54 @@
                         </ul>
                         <button @click="refreshFiles">刷新</button>
                     </section>
-                <!--    <section class="changelog-viewer">
+                    <section class="changelog-viewer">
                         <div class="changelog-header">
                             <h2>更新日志
                                 <i class="fa-solid fa-book-open-reader " style="color: rgb(15, 172, 207);"></i>
                             </h2>
-                            <div class="changelog-controls">
-                                <a href="/Log/Changelog.md" target="_blank" class="raw-link">
-                                </a>
+                        </div>
+                        
+                        <!-- 显示当前页的日志条目 -->
+                        <div v-if="paginatedChangelog.length > 0">
+                            <div v-for="entry in paginatedChangelog" :key="entry.id"
+                                class="markdown-content markdown-body changelog-entry"
+                                v-html="entry.html">
                             </div>
                         </div>
-                        <div v-if="changelogHtml"
-                            class="markdown-content"
-                            v-html="changelogHtml">
+                        <div v-else-if="changelogLoading" class="loading">
+                            加载中...
                         </div>
-                    </section> -->
+                        <div v-else class="no-entries">
+                            暂无更新日志
+                        </div>
+                        
+                        <!-- 分页组件 -->
+                        <div v-if="totalChangelogPages > 1" class="pagination-container">
+                            <paginate
+                                v-model="currentChangelogPage"
+                                :page-count="totalChangelogPages"
+                                :click-handler="changeChangelogPage"
+                                :prev-text="'上一页'"
+                                :next-text="'下一页'"
+                                :container-class="'pagination'"
+                                :page-class="'page-item'">
+                            </paginate>
+                            <div v-if="totalChangelogPages > 1" class="pagination-info">
+                                第 {{ currentChangelogPage }} 页，共 {{ totalChangelogPages }} 页
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="main-development">
+                    <div class="dev-line">
+                        <h2>开发进度
+                            <i class="fa-solid fa-chart-line" style="color: rgb(12, 168, 74);"></i>
+                        </h2>
+                        <div v-if="devlineHtml"
+                            class="markdown-content markdown-body"
+                            v-html="devlineHtml">
+                        </div>
+                    </div>
                 </div>
             </main>
             <footer class="site-footer">

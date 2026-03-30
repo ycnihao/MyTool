@@ -1,7 +1,8 @@
 const { createApp } = Vue;
 
-createApp(
+const app = createApp(
     {
+        //--------------------------------------
         data(){
             return{
                 files: [
@@ -23,9 +24,21 @@ createApp(
                     }
                 ],
                 sortOrder: 'date-desc',
+                changelogHtml:'',
+                changelogRaw:'',
+                changelogLoading:false,
+                changelogSections:[],
+                devlineHtml:'',
+                devlineRaw:'',
+                devlineLoading:false,
+                changelogEntries:[],
+                currentChangelogPage:1,
+                changelogItemsPerPage:3,
             }
 
         },
+
+        //----------------------------------
         methods:{
             refreshFiles(){
                 console.log('刷新文件列表');
@@ -75,24 +88,135 @@ createApp(
                 };
                 return iconColors[file.type]|| 'rgb(108,117,125)';
             },
-//-----------------------            上面是最近更新文件的吧部分，下面是更新日志展示部分-------------------------------
-            async loadChangelog(){
+            initMermaid() {
+                if (typeof mermaid !== 'undefined') {
+                    // 使用默认配置
+                    mermaid.initialize({
+                        startOnLoad: true,
+                        theme: 'default',
+                        securityLevel: 'loose'
+                    });
+                    
+                    // 重新渲染所有 Mermaid 图表
+                    mermaid.init(undefined, '.markdown-content pre code.language-mermaid');
+                }
+            },
+            //-----------------------            上面是最近更新文件的吧部分，下面是更新日志展示部分-------------------------------
+            async loadReadme(){
                 try{
-                    const response = await fetch('/Log/Changelog.md');
+                    const response = await fetch('./README.md');
                     const markdown = await response.text();
-                    this.changelogRaw = markdown;
-                    this.changelogHtml = marked.parse(markdown);
+                    this.devlineRaw = markdown;
+                    this.devlineHtml = marked.parse(markdown);
+                    this.$nextTick(() => {
+                        this.initMermaid();
+                    });
+
                 } catch(error){console.error('加载失败',error)
 
                 } finally{
-                    this.changelogLoading =false;
+                    this.devlineLoading =false;
                 }
 
-            } 
-//---------------------------------截至2026年3月17日，写到了这里，这里的前端展示更新日志的功能还没实现，也就是loadChangelog还没写完）
+            },
+            async loadchangelog(){
+                try{
+                    const response = await fetch('../Log/Changelog_simple.md');
+                    const markdown = await response.text();
+                    this.changelogRaw = markdown;
+                    this.parseChangelogEntries(markdown);
+                    this.changelogHtml = marked.parse(markdown);
+                }catch(error){
+                    console.error('加载失败',error)
+                }finally{
+                    this.changelogLoading =false;
+                }
+            },
+                        // 解析更新日志条目
+            parseChangelogEntries(markdown) {
+                    // 按版本标题分割（## 开头）
+                    const entries = markdown.split('## ');
+                    
+                    // 过滤空条目并转换为结构化数据
+                    const parsedEntries = entries
+                        .filter(entry => entry.trim())
+                        .map((entry, index) => {
+                            const lines = entry.split('\n');
+                            const titleLine = lines[0];
+                            const content = lines.slice(1).join('\n').trim();
+                            
+                            // 提取版本号（例如从 "1.0.4 - 2026年 3月27日" 中提取 "1.0.4"）
+                            const versionMatch = titleLine.match(/^(\d+\.\d+\.\d+)/);
+                            const version = versionMatch ? versionMatch[1] : '0.0.0';
+                            
+                            // 提取日期（例如从 "1.0.4 - 2026年 3月27日" 中提取日期部分）
+                            const dateMatch = titleLine.match(/(\d{4}年\s*\d{1,2}月\d{1,2}日)/);
+                            const dateStr = dateMatch ? dateMatch[1] : '';
+                            
+                            return {
+                                id: index + 1,
+                                title: titleLine,
+                                content: content,
+                                version: version,
+                                dateStr: dateStr,
+                                // 生成HTML（添加回##前缀）
+                                html: marked.parse('## ' + entry)
+                            };
+                        });
+                    
+                    // 按版本号从高到低排序（新到旧）
+                    this.changelogEntries = parsedEntries.sort((a, b) => {
+                        // 比较版本号，例如 1.0.4 > 1.0.3
+                        const versionA = a.version.split('.').map(Number);
+                        const versionB = b.version.split('.').map(Number);
+                        
+                        for (let i = 0; i < Math.max(versionA.length, versionB.length); i++) {
+                            const partA = versionA[i] || 0;
+                            const partB = versionB[i] || 0;
+                            if (partA !== partB) {
+                                return partB - partA; // 降序排序
+                            }
+                        }
+                        return 0;
+                    });
+                    
+                    console.log('解析并排序后的日志条目:', this.changelogEntries);
+                },
+                
+                // 切换页码
+            changeChangelogPage(pageNum) {
+                this.currentChangelogPage = pageNum;
+                    // 可以在这里添加滚动到顶部的逻辑
+                const changelogElement = document.querySelector('.changelog-viewer');
+                if (changelogElement) {
+                    window.scrollTo({
+                        top: changelogElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            },
         },
+
+
+        computed:{
+            paginatedChangelog(){
+                const start = (this.currentChangelogPage - 1) * this.changelogItemsPerPage;
+                const end = start + this.changelogItemsPerPage;
+                return this.changelogEntries.slice(start,end);
+            },
+            totalChangelogPages(){
+                return Math.ceil(this.changelogEntries.length / this.changelogItemsPerPage);
+            }
+        },
+
+        //---------------------------
         mounted(){
             this.sortByDateDesc();
+            this.loadReadme();
+            this.loadchangelog();
         }
+
     }
-).mount('#app');
+);
+app.component('paginate', VuejsPaginateNext);
+app.mount('#app');
