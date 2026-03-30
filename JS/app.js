@@ -121,7 +121,7 @@ const app = createApp(
             },
             async loadchangelog(){
                 try{
-                    const response = await fetch('./Log/Changelog_simple.md');
+                    const response = await fetch('/Log/Changelog_simple.md');
                     const markdown = await response.text();
                     this.changelogRaw = markdown;
                     this.parseChangelogEntries(markdown);
