@@ -481,7 +481,7 @@ footer{
         margin-right:8px;
     }
     /*-----------------2026年3月16日--------------------*/
-        @media (max-width:768px){
+    @media (max-width:768px){
         .file-item {
             flex-direction:column;
             align-items: flex-start;

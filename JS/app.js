@@ -102,37 +102,7 @@ const app = createApp(
                 }
             },
             //-----------------------            上面是最近更新文件的吧部分，下面是更新日志展示部分-------------------------------
-            async loadReadme(){
-                try{
-                    const response = await fetch('./README.md');
-                    const markdown = await response.text();
-                    this.devlineRaw = markdown;
-                    this.devlineHtml = marked.parse(markdown);
-                    this.$nextTick(() => {
-                        this.initMermaid();
-                    });
-
-                } catch(error){console.error('加载失败',error)
-
-                } finally{
-                    this.devlineLoading =false;
-                }
-
-            },
-            async loadchangelog(){
-                try{
-                    const response = await fetch('./Log/Changelog_simple.md');
-                    const markdown = await response.text();
-                    this.changelogRaw = markdown;
-                    this.parseChangelogEntries(markdown);
-                    this.changelogHtml = marked.parse(markdown);
-                }catch(error){
-                    console.error('加载失败',error)
-                }finally{
-                    this.changelogLoading =false;
-                }
-            },
-                        // 解析更新日志条目
+            // 解析更新日志条目
             parseChangelogEntries(markdown) {
                     // 按版本标题分割（## 开头）
                     const entries = markdown.split('## ');
@@ -181,9 +151,9 @@ const app = createApp(
                     });
                     
                     console.log('解析并排序后的日志条目:', this.changelogEntries);
-                },
+            },
                 
-                // 切换页码
+            // 切换页码
             changeChangelogPage(pageNum) {
                 this.currentChangelogPage = pageNum;
                     // 可以在这里添加滚动到顶部的逻辑
@@ -193,6 +163,37 @@ const app = createApp(
                         top: changelogElement.offsetTop - 100,
                         behavior: 'smooth'
                     });
+                }
+            },
+
+            async loadReadme(){
+                try{
+                    const response = await fetch('./README.md');
+                    const markdown = await response.text();
+                    this.devlineRaw = markdown;
+                    this.devlineHtml = marked.parse(markdown);
+                    this.$nextTick(() => {
+                        this.initMermaid();
+                    });
+
+                } catch(error){console.error('加载失败',error)
+
+                } finally{
+                    this.devlineLoading =false;
+                }
+
+            },
+            async loadchangelog(){
+                try{
+                    const response = await fetch('../Log/Changelog_simple.md');
+                    const markdown = await response.text();
+                    this.changelogRaw = markdown;
+                    this.parseChangelogEntries(markdown);
+                    this.changelogHtml = marked.parse(markdown);
+                }catch(error){
+                    console.error('加载失败',error)
+                }finally{
+                    this.changelogLoading =false;
                 }
             },
         },
