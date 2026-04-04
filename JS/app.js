@@ -90,24 +90,23 @@ const app = createApp(
             },
             initMermaid() {
                 if (typeof mermaid !== 'undefined') {
-                    // 使用默认配置
                     mermaid.initialize({
                         startOnLoad: true,
                         theme: 'default',
                         securityLevel: 'loose'
                     });
                     
-                    // 重新渲染所有 Mermaid 图表
+
                     mermaid.init(undefined, '.markdown-content pre code.language-mermaid');
                 }
             },
             //-----------------------            上面是最近更新文件的吧部分，下面是更新日志展示部分-------------------------------
-            // 解析更新日志条目
+            
             parseChangelogEntries(markdown) {
-                    // 按版本标题分割（## 开头）
+                    
                     const entries = markdown.split('## ');
                     
-                    // 过滤空条目并转换为结构化数据
+                    
                     const parsedEntries = entries
                         .filter(entry => entry.trim())
                         .map((entry, index) => {
