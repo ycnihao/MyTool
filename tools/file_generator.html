@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件条目生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin: 25px 0 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .file-entry {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .file-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .file-entry-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .add-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .add-btn:hover {
+            background: #27ae60;
+        }
+        
+        .generate-btn {
+            background: #3498db;
+            color: white;
+        }
+        
+        .generate-btn:hover {
+            background: #2980b9;
+        }
+        
+        .clear-btn {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .output-container {
+            margin-top: 30px;
+        }
+        
+        .output-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background: #f8f9fa;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .tab.active {
+            background: white;
+            border-color: #ddd;
+            border-bottom-color: white;
+            margin-bottom: -1px;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 4px 4px 4px;
+            padding: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .copy-btn {
+            background: #9b59b6;
+            color: white;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #8e44ad;
+        }
+        
+        .instructions {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📁 文件条目生成器</h1>
+        
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <ul>
+                <li>填写文件信息，点击"添加文件"按钮添加更多文件</li>
+                <li>点击"生成代码"按钮生成JavaScript和JSON代码</li>
+                <li>复制生成的代码到你的Vue.js应用中</li>
+                <li>示例URL格式: https://github.com/用户名/仓库名/releases/download/版本号/文件名</li>
+            </ul>
+        </div>
+        
+        <h2>文件信息</h2>
+        <div id="file-entries">
+            <!-- 文件条目将在这里动态添加 -->
+        </div>
+        
+        <div class="buttons">
+            <button type="button" class="add-btn" onclick="addFileEntry()">➕ 添加文件</button>
+            <button type="button" class="generate-btn" onclick="generateCode()">🚀 生成代码</button>
+            <button type="button" class="clear-btn" onclick="clearAll()">🗑️ 清空所有</button>
+        </div>
+        
+        <div class="output-container" id="output-container" style="display: none;">
+            <h2>生成的代码</h2>
+            
+            <div class="output-tabs">
+                <div class="tab active" onclick="switchTab('js-tab')">JavaScript代码</div>
+                <div class="tab" onclick="switchTab('json-tab')">JSON格式</div>
+            </div>
+            
+            <div id="js-tab" class="tab-content active">
+                <pre id="js-output"></pre>
+                <button class="copy-btn" onclick="copyToClipboard('js-output')">📋 复制JavaScript代码</button>
+            </div>
+            
+            <div id="json-tab" class="tab-content">
+                <pre id="json-output"></pre>
+                <button class="copy-btn" onclick="copyToClipboard('json-output')">📋 复制JSON代码</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let fileCounter = 1;
+        
+        // 添加初始文件条目
+        document.addEventListener('DOMContentLoaded', function() {
+            addFileEntry();
+        });
+        
+        function addFileEntry() {
+            const container = document.getElementById('file-entries');
+            const entryId = fileCounter++;
+            
+            const today = new Date().toISOString().split('T')[0];
+            
+            const entryHTML = `
+                <div class="file-entry" id="entry-${entryId}">
+                    <div class="file-entry-header">
+                        <div class="file-entry-title">文件 #${entryId}</div>
+                        <button type="button" class="remove-btn" onclick="removeFileEntry(${entryId})">删除</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name-${entryId}">文件名 *</label>
+                            <input type="text" id="name-${entryId}" placeholder="例如: 测试文件.pdf" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="url-${entryId}">文件URL *</label>
+                            <input type="url" id="url-${entryId}" placeholder="https://example.com/file.pdf" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date-${entryId}">日期</label>
+                            <input type="date" id="date-${entryId}" value="${today}">
+                        </div>
+                        <div class="form-group">
+                            <label for="size-${entryId}">文件大小</label>
+                            <input type="text" id="size-${entryId}" placeholder="例如: 19.64KB, 2.58MB">
+                        </div>
+                        <div class="form-group">
+                            <label for="type-${entryId}">文件类型</label>
+                            <input type="text" id="type-${entryId}" placeholder="例如: pdf, mp3">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', entryHTML);
+        }
+        
+        function removeFileEntry(id) {
+            const entry = document.getElementById(`entry-${id}`);
+            if (entry) {
+                entry.remove();
+            }
+        }
+        
+        function clearAll() {
+            if (confirm('确定要清空所有文件信息吗？')) {
+                document.getElementById('file-entries').innerHTML = '';
+                fileCounter = 1;
+                addFileEntry();
+                document.getElementById('output-container').style.display = 'none';
+            }
+        }
+        
+        function generateCode() {
+            const entries = [];
+            let valid = true;
+            
+            // 收集所有文件条目
+            for (let i = 1; i < fileCounter; i++) {
+                const entryElement = document.getElementById(`entry-${i}`);
+                if (!entryElement) continue;
+                
+                const name = document.getElementById(`name-${i}`).value.trim();
+                const url = document.getElementById(`url-${i}`).value.trim();
+                const date = document.getElementById(`date-${i}`).value;
+                const size = document.getElementById(`size-${i}`).value.trim();
+                const type = document.getElementById(`type-${i}`).value.trim();
+                
+                // 验证必填字段
+                if (!name || !url) {
+                    valid = false;
+                    alert(`文件 #${i} 的文件名和URL是必填项`);
+                    break;
+                }
+                
+                // 自动检测文件类型
+                let fileType = type;
+                if (!fileType) {
+                    const ext = name.split('.').pop().toLowerCase();
+                    if (['pdf', 'doc', 'docx', 'txt', 'md'].includes(ext)) {
+                        fileType = 'document';
+                    } else if (['mp3', 'wav', 'flac'].includes(ext)) {
+                        fileType = 'audio';
+                    } else if (['mp4', 'avi', 'mov'].includes(ext)) {
+                        fileType = 'video';
+                    } else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+                        fileType = 'image';
+                    } else {
+                        fileType = ext;
+                    }
+                }
+                
+                entries.push({
+                    id: i,
+                    name: name,
+                    url: url,
+                    date: date || new Date().toISOString().split('T')[0],
+                    size: size || undefined,
+                    type: fileType
+                });
+            }
+            
+            if (valid && entries.length > 0) {
+                generateJsCode(entries);
+                generateJsonCode(entries);
+                document.getElementById('output-container').style.display = 'block';
+            }
+        }
+        
+        function generateJsCode(entries) {
+            let jsCode = '';
+            
+            entries.forEach((entry, index) => {
+                jsCode += `                    {\n`;
+                jsCode += `                        id:${entry.id},\n`;
+                jsCode += `                        name:'${entry.name.replace(/'/g, "\\'")}',\n`;
+                jsCode += `                        url:'${entry.url.replace(/'/g, "\\'")}',\n`;
+                jsCode += `                        date:'${entry.date}',\n`;
+                if (entry.size) {
+                    jsCode += `                        size:'${entry.size.replace(/'/g, "\\'")}',\n`;
+                }
+                jsCode += `                        type: '${entry.type}'\n`;
+                jsCode += `                    }${index < entries.length - 1 ? ',' : ''}\n`;
+            });
+            
+            document.getElementById('js-output').textContent = jsCode;
+        }
+        
+        function generateJsonCode(entries) {
+            // 移除id字段，因为JSON不需要它
+            const jsonEntries = entries.map(entry => {
+                const { id, ...rest } = entry;
+                return rest;
+            });
+            
+            const jsonCode = JSON.stringify(jsonEntries, null, 4);
+            document.getElementById('json-output').textContent = jsonCode;
+        }
+        
+        function switchTab(tabId) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 移除所有标签的active类
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签内容
+            document.getElementById(tabId).classList.add('active');
+            
+            // 激活选中的标签
+            event.target.classList.add('active');
+        }
+        
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('代码已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败: ', err);
+                alert('复制失败，请手动选择并复制代码。');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动文件提取器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; line-height: 1.6; color: #333; background-color: #f5f5f5; padding: 20px; }
+        .container { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 1200px; margin: 0 auto; }
+        h1 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db; }
+        h2 { color: #34495e; margin: 25px 0 15px; }
+        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        @media (max-width: 992px) { .dashboard { grid-template-columns: 1fr; } }
+        .panel { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 20px; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .panel-title { font-weight: 600; color: #2c3e50; font-size: 1.1rem; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #2ecc71; color: white; }
+        .btn-success:hover { background: #27ae60; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-warning:hover { background: #d68910; }
+        .btn-small { padding: 4px 8px; font-size: 12px; }
+        .file-list { max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; background: white; }
+        .file-item { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #eee; }
+        .file-item:hover { background-color: #f8f9fa; }
+        .file-checkbox { margin-right: 10px; }
+        .file-info { flex: 1; min-width: 0; }
+        .file-name { font-weight: 500; color: #2c3e50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-meta { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+        .selected-files { background: #e8f6f3; border-color: #2ecc71; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; color: #2c3e50; }
+        input[type="text"], input[type="url"], input[type="date"], select { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .output-container { margin-top: 30px; }
+        .output-tabs { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 15px; }
+        .tab { padding: 10px 20px; cursor: pointer; border: 1px solid transparent; border-bottom: none; background: #f8f9fa; margin-right: 5px; border-radius: 4px 4px 0 0; }
+        .tab.active { background: white; border-color: #ddd; border-bottom-color: white; margin-bottom: -1px; }
+        .tab-content { display: none; background: white; border: 1px solid #ddd; border-radius: 0 4px 4px 4px; padding: 20px; }
+        .tab-content.active { display: block; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 13px; line-height: 1.4; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+        .copy-btn { background: #9b59b6; color: white; margin-top: 10px; }
+        .copy-btn:hover { background: #8e44ad; }
+        .instructions { background: #e8f4fc; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
+        .empty-state { text-align: center; padding: 40px; color: #7f8c8d; }
+        .select-all { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-file-import"></i> 自动文件提取器</h1>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+            <ul>
+                <li><strong>步骤1</strong>: 点击"扫描本地文件"按钮（需要后端API支持）</li>
+                <li><strong>步骤2</strong>: 从扫描结果中选择要包含的文件</li>
+                <li><strong>步骤3</strong>: 配置URL前缀和日期格式</li>
+                <li><strong>步骤4</strong>: 点击"生成Vue.js代码"按钮</li>
+                <li><strong>步骤5</strong>: 复制生成的代码到你的Vue.js应用中</li>
+            </ul>
+        </div>
+        
+        <div class="dashboard">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-folder-open"></i> 扫描到的文件</div>
+                    <div>
+                        <button class="btn btn-primary btn-small" onclick="scanFiles()">
+                            <i class="fas fa-search"></i> 扫描
+                        </button>
+                        <button class="btn btn-warning btn-small" onclick="loadSampleData()">
+                            <i class="fas fa-vial"></i> 示例
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="select-all">
+                    <input type="checkbox" id="select-all-files" onchange="toggleSelectAll()">
+                    <label for="select-all-files">全选/取消全选</label>
+                </div>
+                
+                <div class="file-list" id="scanned-files">
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>没有扫描到文件</p>
+                        <p>点击"扫描"按钮开始</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel selected-files">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-check-circle"></i> 已选择的文件</div>
+                    <div>
+                        <button class="btn btn-success btn-small" onclick="generateCode()">
+                            <i class="fas fa-code"></i> 生成代码
+                        </button>
+                        <button class="btn btn-warning btn-small" onclick="clearSelected()">
+                            <i class="fas fa-trash"></i> 清空
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="file-list" id="selected-files-list">
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <p>尚未选择任何文件</p>
+                        <p>从左侧列表中选择文件</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h3><i class="fas fa-cog"></i> 配置选项</h3>
+            
+            <div class="form-group">
+                <label for="url-base"><i class="fas fa-link"></i> URL前缀</label>
+                <input type="text" id="url-base" placeholder="https://github.com/用户名/仓库名/releases/download/" value="https://github.com/ycnihao/MyTool/releases/download/">
+                <small>最终URL格式: 前缀 + 文件名</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="date-format"><i class="fas fa-calendar"></i> 日期格式</label>
+                <select id="date-format">
+                    <option value="today" selected>使用今天日期</option>
+                    <option value="custom">自定义日期</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="output-container" id="output-container" style="display: none;">
+            <h2><i class="fas fa-file-code"></i> 生成的代码</h2>
+            
+            <div class="output-tabs">
+                <div class="tab active" onclick="switchTab('js-tab')">JavaScript代码</div>
+                <div class="tab" onclick="switchTab('json-tab')">JSON格式</div>
+            </div>
+            
+            <div id="js-tab" class="tab-content active">
+                <pre id="js-output"></pre>
+                <button class="btn copy-btn" onclick="copyToClipboard('js-output')">
+                    <i class="fas fa-copy"></i> 复制JavaScript代码
+                </button>
+            </div>
+            
+            <div id="json-tab" class="tab-content">
+                <pre id="json-output"></pre>
+                <button class="btn copy-btn" onclick="copyToClipboard('json-output')">
+                    <i class="fas fa-copy"></i> 复制JSON代码
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sampleFiles = [
+            { id: 'file1', name: 'HELLO.WORLD.pdf', size: 20112, size_display: '19.6KB', modified_display: '2026-03-16 12:21:51', type: 'pdf', category: '测试文件' },
+            { id: 'file2', name: '项目文档.docx', size: 524288, size_display: '512KB', modified_display: '2026-03-16 12:23:20', type: 'word', category: '项目文档' },
+            { id: 'file3', name: '演示文稿.pptx', size: 1048576, size_display: '1MB', modified_display: '2026-03-16 12:25:00', type: 'powerpoint', category: '演示文稿' },
+            { id: 'file4', name: '产品截图.png', size: 307200, size_display: '300KB', modified_display: '2026-03-16 12:26:40', type: 'image', category: '产品图片' }
+        ];
+        
+        let scannedFiles = [];
+        let selectedFiles = new Set();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSampleData();
+        });
+        
+        function scanFiles() {
+            alert('由于浏览器安全限制，文件扫描功能需要后端API支持。\n\n当前演示版本使用示例数据。\n\n在实际部署中，您需要创建一个后端API来扫描文件。');
+            loadSampleData();
+        }
+        
+        function loadSampleData() {
+            scannedFiles = [...sampleFiles];
+            renderScannedFiles();
+        }
+        
+        function renderScannedFiles() {
+            const container = document.getElementById('scanned-files');
+            if (scannedFiles.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>没有扫描到文件</p><p>点击"扫描"按钮开始</p></div>';
+                return;
+            }
+            
+            let html = '';
+            scannedFiles.forEach(file => {
+                const isSelected = selectedFiles.has(file.id);
+                html += `
+                    <div class="file-item ${isSelected ? 'selected' : ''}" data-file-id="${file.id}">
+                        <input type="checkbox" class="file-checkbox" ${isSelected ? 'checked' : ''} 
+                               onchange="toggleFileSelection('${file.id}', this.checked)">
+                        <div class="file-info">
+                            <div class="file-name" title="${file.name}">${file.name}</div>
+                            <div class="file-meta">
+                                <span class="file-size">${file.size_display}</span>
+                                <span class="file-date">${file.modified_display.split(' ')[0]}</span>
+                                <span class="file-type">${file.type}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function renderSelectedFiles() {
+            const container = document.getElementById('selected-files-list');
+            if (selectedFiles.size === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-file-alt"></i><p>尚未选择任何文件</p><p>从左侧列表中选择文件</p></div>';
+                return;
+            }
+            
+            let html = '';
+            Array.from(selectedFiles).forEach(fileId => {
+                const file = scannedFiles.find(f => f.id === fileId);
+                if (!file) return;
+                
+                html += `
+                    <div class="file-item" data-file-id="${file.id}">
+                        <div class="file-info">
+                            <div class="file-name" title="${file.name}">${file.name}</div>
+                            <div class="file-meta">
+                                <span class="file-size">${file.size_display}</span>
+                                <span class="file-date">${file.modified_display.split(' ')[0]}</span>
+                                <span class="file-type">${file.type}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-small" onclick="removeFromSelection('${file.id}')" title="移除">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function toggleFileSelection(fileId, isSelected) {
+            if (isSelected) {
+                selectedFiles.add(fileId);
+            } else {
+                selectedFiles.delete(fileId);
+            }
+            renderSelectedFiles();
+        }
+        
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('select-all-files');
+            const isChecked = selectAllCheckbox.checked;
+            
+            if (isChecked) {
+                scannedFiles.forEach(file => selectedFiles.add(file.id));
+            } else {
+                selectedFiles.clear();
+            }
+            
+            document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            
+            renderScannedFiles();
+            renderSelectedFiles();
+        }
+        
+        function removeFromSelection(fileId) {
+            selectedFiles.delete(fileId);
+            const checkbox = document.querySelector(`[data-file-id="${fileId}"] .file-checkbox`);
+            if (checkbox) checkbox.checked = false;
+            renderSelectedFiles();
+        }
+        
+        function clearSelected() {
+            if (selectedFiles.size === 0) return;
+            if (confirm(`确定要清空 ${selectedFiles.size} 个已选择的文件吗？`)) {
+                selectedFiles.clear();
+                document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                document.getElementById('select-all-files').checked = false;
+                renderScannedFiles();
+                renderSelectedFiles();
+            }
+        }
+        
+        function generateCode() {
+            if (selectedFiles.size === 0) {
+                alert('请先选择要生成代码的文件');
+                return;
+            }
+            
+            const urlBase = document.getElementById('url-base').value.trim();
+            const dateFormat = document.getElementById('date-format').value;
+            
+            const entries = [];
+            let idCounter = 1;
+            
+            Array.from(selectedFiles).forEach(fileId => {
+                const file = scannedFiles.find(f => f.id === fileId);
+                if (!file) return;
+                
+                let date;
+                if (dateFormat === 'custom') {
+                    date = prompt('请输入日期 (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+                    if (!date) date = new Date().toISOString().split('T')[0];
+                } else {
+                    date = new Date().toISOString().split('T')[0];
+                }
+                
+                let fileType = file.type;
+                if (fileType === 'word') fileType = 'doc';
+                if (fileType === 'powerpoint') fileType = 'ppt';
+                
+                const url = urlBase + file.name;
+                
+                entries.push({
+                    id: idCounter++,
+                    name: file.name,
+                    url: url,
+                    date: date,
+                    size: file.size_display,
+                    type: fileType
+                });
+            });
+            
+            generateJsCode(entries);
+            generateJsonCode(entries);
+            document.getElementById('output-container').style.display = 'block';
+        }
+        
+        function generateJsCode(entries) {
+            let jsCode = '';
+            entries.forEach((entry, index) => {
+                jsCode += `                    {\n`;
+                jsCode += `                        id:${entry.id},\n`;
+                jsCode += `                        name:'${entry.name.replace(/'/g, "\\'")}',\n`;
+                jsCode += `                        url:'${entry.url.replace(/'/g, "\\'")}',\n`;
+                jsCode += `                        date:'${entry.date}',\n`;
+                jsCode += `                        size:'${entry.size.replace(/'/g, "\\'")}',\n`;
+                jsCode += `                        type: '${entry.type}'\n`;
+                jsCode += `                    }${index < entries.length - 1 ? ',' : ''}\n`;
+            });
+            document.getElementById('js-output').textContent = jsCode;
+        }
+        
+        function generateJsonCode(entries) {
+            const jsonEntries = entries.map(entry => {
+                const { id, ...rest } = entry;
+                return rest;
+            });
+            const jsonCode = JSON.stringify(jsonEntries, null, 4);
+            document.getElementById('json-output').textContent = jsonCode;
+        }
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('代码已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败: ', err);
+                alert('复制失败，请手动选择并复制代码。');
+            });
+        }
+    </script>
+</body>
+</html>

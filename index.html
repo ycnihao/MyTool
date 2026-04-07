@@ -48,13 +48,19 @@
             <main>
                 <div class="main-content"><!--2026年3月27日新加的，原本main只有recent-file这一个，但是为了同时左右展示，所以加了一个大容器，然后让日志与最近的文件并列-->
                     <section class="recent-files">
-                        <h2>最近的更新的文件
-                        <i class="fa-regular fa-file-pdf" style="color: rgb(199, 20, 39);"></i>
-                        </h2>
-                        <div class="sort-controls">
-                            <button @click="sortByDateDesc" :class="{ active: sortOrder === 'date-desc'}">
-                                <i class="fa-solid fa-arrow-down-short-wide" style="color: rgb(240, 154, 6);"></i> 最新
-                                </button>
+                        <div class="section-header">
+                            <h2>最近的更新的文件
+                            <i class="fa-regular fa-file-pdf" style="color: rgb(199, 20, 39);"></i>
+                            </h2>
+                            <div class="button-group">
+                                <div class="sort-controls">
+                                    <button @click="sortByDateDesc" :class="{ active: sortOrder === 'date-desc'}">
+                                        <i class="fa-solid fa-arrow-down-short-wide" style="color: rgb(240, 154, 6);"></i> 最新
+                                        </button>
+                                </div>
+                                <button @click="refreshFiles" class="refresh-btn">
+                                <i class="fa-solid fa-arrow-rotate-right" style="color: rgb(116, 192, 252);"></i>刷新</button>
+                            </div>
                         </div>
 
                         <ul class="file-list">
@@ -73,7 +79,6 @@
                                 </a>
                             </li>
                         </ul>
-                        <button @click="refreshFiles">刷新</button>
                     </section>
                     <section class="changelog-viewer">
                         <div class="changelog-header">

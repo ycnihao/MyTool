@@ -266,6 +266,48 @@ main{
             padding: 30px;
             border-radius: 8px;
         }
+
+        /* 按钮位置调整 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .sort-controls button,
+        .refresh-btn {
+            padding: 8px 16px;
+            background-color: white;
+            border: transparent;
+            border-radius: 4px;
+            color: #495057;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .sort-controls button:hover,
+        .refresh-btn:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+        
+        .sort-controls button.active {
+            background-color: transparent;
+            color: black;
+            border-color: transparent;
+        }
+        .sort-controls button.active:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
         .changelog-viewer .markdown-content{
             font-size:0.85rem;
             line-height: 1.5;
@@ -389,6 +431,29 @@ main{
                 
                 .changelog-viewer .markdown-content {
                     font-size: 0.9rem;
+                }
+                
+                .section-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+                
+                .button-group {
+                    width: 100%;
+                    justify-content: flex-start;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .button-group {
+                    flex-wrap: wrap;
+                }
+                
+                .sort-controls button,
+                .refresh-btn {
+                    padding: 6px 12px;
+                    font-size: 0.85rem;
                 }
             }
 
