@@ -1,0 +1,520 @@
+.file-browser {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+    padding: 12px 16px;
+    background-color: transparent;
+    border-radius: 0;
+    border: none;
+}
+.breadcrumb a {
+    color: #0366d6;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.breadcrumb .separator {
+    margin: 0 8px;
+    color: #6c757d;
+}
+.controls-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    background-color: white;
+    border-bottom: 2.5px solid black;
+}
+
+.search-box {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+.search-box input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+.search-box input:focus {
+    outline: none;
+    border-color: white;
+    box-shadow: 0 0 0 0.2rem black;
+}
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgb(228, 138, 27);
+}
+.sort-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+/* 分类下拉样式 */
+.category-control {
+    position: relative;
+    margin-right: 12px;
+    display: inline-block;
+}
+.category-toggle {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+/* 可排序表头样式 */
+
+.th-sortable {
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.sort-indicator {
+    color: #6c757d;
+    font-size: 12px;
+}
+/* 返回按钮样式（小图标） */
+.back-btn {
+    padding: 6px;
+    border: none;
+    background: transparent;
+    color: black;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border-radius: 6px;
+    text-decoration:none;
+}
+.back-btn i {
+    font-size: 18px;
+}
+.back-btn:hover {
+    background-color: transparent;
+    color: orange;
+}
+.category-dropdown {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    background: white;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-radius: 6px;
+    min-width: 220px;
+    z-index: 120;
+    padding: 6px;
+}
+.category-item {
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.category-item:hover {
+    background-color: #ccc;
+}
+.sort-controls button {
+    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s;
+}
+.sort-controls button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: #999;
+}
+.sort-controls button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+.content-area {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+.directory-tree {
+    flex: 0 0 250px;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 20px;
+    border: none;
+    max-height: 600px;
+    overflow-y: auto;
+}
+.tree-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+}
+.tree-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateX(5px);
+}
+.tree-item.active {
+    background-color: rgba(0, 123, 255, 0.12);
+    border-left: 4px solid #007bff;
+    transform: none;
+}
+.tree-item i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+.tree-item.folder i {
+    color: #ff6b6b;
+}
+.tree-item.file i {
+    color: #4dabf7;
+}
+.file-list-container {
+    flex: 1;
+    background-color: transparent;
+    border-radius: 0;
+    border: none;
+    overflow: hidden;
+}
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.file-table th,
+.file-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+.file-table th {
+    color: #495057;
+    font-weight: 600;
+    background-color: transparent;
+    text-align: left;
+}
+/* 列对齐：第二列（大小）、第三列（修改日期）、第四列（操作）居中显示 */
+.file-table th:nth-child(2),
+.file-table td:nth-child(2),
+.file-table th:nth-child(3),
+.file-table td:nth-child(3),
+.file-table th:nth-child(4),
+.file-table td:nth-child(4) {
+    text-align: center;
+}
+/* 操作列使用 flex 居中，保证下载按钮水平垂直居中 */
+.file-table td:nth-child(4) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.download-btn {
+    margin: 0;
+    display: inline-flex;
+}
+.file-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.file-name {
+    display: flex;
+    align-items: center;
+}
+.file-name i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+.file-name a {
+    color: #0366d6;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+.file-name a:hover {
+    text-decoration: underline;
+    background-color: #e9ecef;
+}
+.file-name 
+.file-size {
+    color: black;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+}
+.file-date {
+    color: black;
+    font-size: 13px;
+}
+.download-btn {
+    padding: 6px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s;
+}
+.download-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+/* 移动端卡片视图 */
+.file-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.file-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+}
+.file-card-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+.file-card-left i {
+    font-size: 20px;
+    width: 28px;
+    text-align: center;
+    color: #4dabf7;
+}
+.file-card-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.file-card-name {
+    font-weight: 600;
+    color: #0366d6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.file-card-meta {
+    color: #6c757d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+.file-card-action {
+    margin-left: 12px;
+}
+.empty-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+.empty-message i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #adb5bd;
+}
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+.stats-info {
+    padding: 12px 16px;
+    background-color: transparent;
+    border-top: 1px solid black;
+    color: #6c757d;
+    font-size: 13px;
+}
+/* 分页样式 */
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+}
+.page-item {
+    margin: 0 2px;
+}
+.page-item a {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    min-width: 40px;
+    text-align: center;
+}
+.page-item a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: #999;
+}
+.page-item.active a {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+.page-item.disabled a {
+    color: #999;
+    cursor: not-allowed;
+    background-color: transparent;
+}
+.page-item.disabled a:hover {
+    background-color: transparent;
+    border-color: #ccc;
+}
+.pagination-info {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .content-area {
+        flex-direction: column;
+    }
+    .directory-tree {
+        max-height: 300px;
+    }
+    /* 移动端：controls-bar 采用换行布局，保持紧凑 */
+    .controls-bar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+    .back-control {
+        flex: 0 0 auto;
+        order: 1;
+    }
+    .category-control {
+        flex: 0 0 auto;
+        order: 2;
+        position: relative;
+    }
+    .search-box {
+        order: 3;
+        flex: 1 1 100%;
+        max-width: none;
+        min-width: 0;
+    }
+    /* 下拉在移动端做成全宽浮层，避免撑高 controls-bar */
+    .category-control .category-dropdown {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        top: calc(100% + 6px);
+        min-width: auto;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+        max-height: 260px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+    .category-item {
+        padding: 10px;
+    }
+    .file-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .file-browser-header h1 {
+        font-size: 1.8rem;
+    }
+    .file-browser-header p {
+        font-size: 0.9rem;
+    }
+    .nav-back a {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    .breadcrumb {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    .controls-bar {
+        padding: 10px;
+    }
+    .sort-controls button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    .file-table th,
+    .file-table td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+    .file-name i {
+        margin-right: 8px;
+    }
+    .download-btn {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+    .pagination .page-item a {
+        padding: 6px 10px;
+        min-width: 32px;
+        font-size: 13px;
+    }
+    .stats-info {
+        font-size: 12px;
+    }
+}

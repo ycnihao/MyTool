@@ -1,23 +1,198 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset = "utf-8">
+        <meta charset="utf-8">
+        <title>文件下载</title>
+        <link rel="stylesheet" href="../CSS/style.css">
+        <link rel="stylesheet" href="../libs/font-awesome/css/all.min.css">
+        <link rel="stylesheet" href="../CSS/computer.css">
+        <script src="../libs/vue/vue.global.js"></script>
+        <script src="../JS/file-browser.js"></script>
     </head>
     <body>
-        <div id="Computer">
-            <header>
-                <h1>计算机</h1>
-                <p>AI时代的基础知识</p>
-            </header>
-            <nav>
+        <div id="file-browser">
+            <div class="file-browser">
+                <div class="breadcrumb" v-if="showBreadcrumb">
+                    <a @click="goToRoot">
+                        <i class="fa-solid fa-house"></i> 根目录
+                    </a>
+                    <span class="separator">/</span>
+                    <template v-for="(item, index) in breadcrumb">
+                        <a @click="goToPath(item.path)" :key="item.path">{{item.name}}</a>
+                        <span class="separator" v-if="index < breadcrumb.length - 1">/</span>
+                    </template>
+                </div>
                 
-            </nav>
-            <main>
-            </main>
-            <footer>
+                <div class="controls-bar">
+                    <div class="back-control">
+                        <a class="back-btn" href="../index.html" title="返回">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </a>
+                    </div>
+                    <div class="category-control">
+                        <button class="category-toggle" @click.stop="showCategoryDropdown = !showCategoryDropdown">
+                            <i class="fa-solid fa-folder"></i>
+                            <span v-if="selectedCategory">{{selectedCategory}}</span>
+                            <span v-else>全部</span>
+                            <i class="fa-solid" :class="showCategoryDropdown ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                        <div class="category-dropdown" v-if="showCategoryDropdown">
+                            <div class="category-item" @click="clearCategory">全部 ({{ allFiles.length }})</div>
+                            <div class="category-item" v-for="cat in categories" :key="cat" @click="selectCategory(cat)">
+                                {{ cat }} ({{ allFiles.filter(f => f.category === cat).length }})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" 
+                               v-model="searchQuery" 
+                               placeholder="搜索文件或文件夹..."
+                               @input="onSearch">
+                    </div>
+                </div>
+                
+                <div class="content-area">
+                    <div class="file-list-container">
+                        <div v-if="loading" class="loading">
+                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                            <p>正在加载文件列表...</p>
+                        </div>
+                        <div v-else-if="filteredItems.length === 0" class="empty-message">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <p v-if="searchQuery">未找到匹配"{{searchQuery}}"的文件或文件夹</p>
+                            <p v-else-if="selectedCategory">该分类下没有文件</p>
+                            <p v-else>当前没有未分类文件</p>
+                        </div>
+                        <div v-else>
+                            <div v-if="!isMobile">
+                                <table class="file-table">
+                                    <thead>
+                                        <tr>
+                                            <th @click="toggleSort('name')">
+                                                <span class="th-sortable">名称
+                                                    <i class="fa-solid sort-indicator" :class="sortOrder === 'name' ? (sortAsc ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-sort'"></i>
+                                                </span>
+                                            </th>
+                                            <th @click="toggleSort('size')">
+                                                <span class="th-sortable">大小
+                                                    <i class="fa-solid sort-indicator" :class="sortOrder === 'size' ? (sortAsc ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-sort'"></i>
+                                                </span>
+                                            </th>
+                                            <th @click="toggleSort('date')">
+                                                <span class="th-sortable">修改日期
+                                                    <i class="fa-solid sort-indicator" :class="sortOrder === 'date' ? (sortAsc ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-sort'"></i>
+                                                </span>
+                                            </th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in paginatedItems" :key="item.name">
+                                            <td>
+                                                <div class="file-name">
+                                                    <i :class="getFileIcon(item)" :style="{ color: getFileIconColor(item) }"></i>
+                                                    <span>{{item.name}}</span>
+                                                </div>
+                                            </td>
+                                            <td class="file-size">{{formatSize(item.size)}}</td>
+                                            <td class="file-date">{{formatDate(item.date)}}</td>
+                                            <td>
+                                                <button v-if="item.type === 'file'" class="download-btn" @click="downloadFile(item)">
+                                                    <i class="fa-solid fa-download"></i> 下载
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else class="file-cards">
+                                <div class="file-card" v-for="item in paginatedItems" :key="item.name">
+                                    <div class="file-card-left">
+                                        <i :class="getFileIcon(item)" :style="{ color: getFileIconColor(item) }"></i>
+                                        <div class="file-card-body">
+                                            <div class="file-card-name">{{ item.name }}</div>
+                                            <div class="file-card-meta">{{ formatDate(item.date) }} · <span class="file-size">{{ formatSize(item.size) }}</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="file-card-action">
+                                        <button v-if="item.type === 'file'" class="download-btn" @click="downloadFile(item)">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stats-info">
+                                <i class="fa-solid fa-info-circle"></i>
+                                共 {{filteredItems.length}} 个项目
+                                <span v-if="searchQuery"> (已分类)</span>
+                            </div>
+                            <div class="pagination-container" v-if="totalPages > 1">
+                                <ul class="pagination">
+                                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                        <a @click="changePage(currentPage - 1)" v-if="currentPage > 1">上一页</a>
+                                        <span v-else>上一页</span>
+                                    </li>
+                                    <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
+                                        <a @click="changePage(page)">{{ page }}</a>
+                                    </li>
+                                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                        <a @click="changePage(currentPage + 1)" v-if="currentPage < totalPages">下一页</a>
+                                        <span v-else>下一页</span>
+                                    </li>
+                                </ul>
+                                <div class="pagination-info">
+                                    第 {{ currentPage }} 页，共 {{ totalPages }} 页
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h4>快速链接</h4>
+                        <ul>
+                            <li><a href="/">
+                                <i class="fa-solid fa-home"></i>首页</a></li>
+                            <li><a href="./log/Changelog.md" target="_blank">
+                                <i class="fa-solid fa-history"></i>更新日志</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>友情链接</h4>
+                        <ul>
+                            <li><a href="https://www.sspu.edu.cn/" target="_blank">
+                                <i class="fa-solid fa-university"></i>上海第二工业大学</a></li>
+                            <li><a href="https://www.github.com/" target="_blank">
+                                <i class="fa-brands fa-github"></i>GitHub</a></li>
+                            <li><a href="https://www.gitee.com/" target="_blank">
+                                <i class="fa-brands fa-git-alt"></i>Gitee</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>来自<a href="" target="_blank">
+                        <i class="fa-solid fa-fan fa-spin"
+                            ></i>作者</a></p>
+                </div>
             </footer>
+            </div>
         </div>
-        <script src="../JS/Computer.js">
+        <script>
+            // 页面配置
+            window.pageConfig = {
+                dataUrl: '../Data/Computer.json', // JSON数据文件路径
+                title: '计算机技术 - 文件下载',       // 页面标题
+                description: '计算机相关学习资料和工具下载', // 页面描述
+                showTree: true,         // 是否显示目录树
+                showBreadcrumb: false    // 是否显示面包屑导航
+            };
+            
+            // 创建文件浏览器应用
+            document.addEventListener('DOMContentLoaded', function() {
+                FileBrowser.createApp('#file-browser', window.pageConfig);
+            });
         </script>
     </body>
 </html>

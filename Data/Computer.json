@@ -1,0 +1,31 @@
+{
+    "name": "计算机技术",
+    "type": "directory",
+    "path": "/",
+    "children": [
+        {
+            "name": "React官方说明文档.md",
+            "type": "file",
+            "category": "前端框架",
+            "size": 120000,
+            "date": "2026-03-28",
+            "url": "https://raw.githubusercontent.com/facebook/react/main/README.md"
+        },
+        {
+            "name": "Vue框架介绍文档.md",
+            "type": "file",
+            "category": "前端框架",
+            "size": 100000,
+            "date": "2026-03-25",
+            "url": "https://raw.githubusercontent.com/vuejs/core/main/README.md"
+        },
+        {
+            "name": "Docker官方入门指南.md",
+            "type": "file",
+            "category": "开发工具",
+            "size": 150000,
+            "date": "2026-03-22",
+            "url": "https://raw.githubusercontent.com/docker/docs/main/README.md"
+        }
+    ]
+}
