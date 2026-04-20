@@ -1,0 +1,15 @@
+{
+    "name": "控制工程",
+    "type": "directory",
+    "path": "/",
+    "children": [
+        {
+            "name": "控制工程wiki百科.html",
+            "type": "file",
+            "category": "控制历史",
+            "size": 251,
+            "date": "2026-04-20",
+            "url": "https://zh.wikipedia.org/wiki/%E6%8E%A7%E5%88%B6%E5%B7%A5%E7%A8%8B"
+        }
+    ]
+}

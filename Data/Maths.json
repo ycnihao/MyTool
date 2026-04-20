@@ -1,0 +1,15 @@
+{
+    "name": "数学",
+    "type": "directory",
+    "path": "/",
+    "children": [
+        {
+            "name": "数学分析wiki百科.html",
+            "type": "file",
+            "category": "数学分析",
+            "size": 410,
+            "date": "2026-04-20",
+            "url": "https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E5%88%86%E6%9E%90"
+        }
+    ]
+}

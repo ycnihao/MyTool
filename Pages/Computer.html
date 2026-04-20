@@ -5,7 +5,7 @@
         <title>文件下载</title>
         <link rel="stylesheet" href="../CSS/style.css">
         <link rel="stylesheet" href="../libs/font-awesome/css/all.min.css">
-        <link rel="stylesheet" href="../CSS/computer.css">
+        <link rel="stylesheet" href="../CSS/page.css">
         <script src="../libs/vue/vue.global.js"></script>
         <script src="../JS/file-browser.js"></script>
     </head>
@@ -99,7 +99,7 @@
                                             <td class="file-date">{{formatDate(item.date)}}</td>
                                             <td>
                                                 <button v-if="item.type === 'file'" class="download-btn" @click="downloadFile(item)">
-                                                    <i class="fa-solid fa-download"></i> 下载
+                                                    <i class="fa-solid fa-download"></i> 下载/跳转
                                                 </button>
                                             </td>
                                         </tr>
@@ -153,9 +153,9 @@
                     <div class="footer-column">
                         <h4>快速链接</h4>
                         <ul>
-                            <li><a href="/">
+                            <li><a href="../">
                                 <i class="fa-solid fa-home"></i>首页</a></li>
-                            <li><a href="./log/Changelog.md" target="_blank">
+                            <li><a href="../Log/Changelog.md" target="_blank">
                                 <i class="fa-solid fa-history"></i>更新日志</a></li>
                         </ul>
                     </div>
@@ -180,7 +180,6 @@
             </div>
         </div>
         <script>
-            // 页面配置
             window.pageConfig = {
                 dataUrl: '../Data/Computer.json', // JSON数据文件路径
                 title: '计算机技术 - 文件下载',       // 页面标题

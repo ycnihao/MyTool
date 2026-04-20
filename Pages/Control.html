@@ -2,411 +2,20 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>控制理论与自动化</title>
+        <title>文件下载</title>
         <link rel="stylesheet" href="../CSS/style.css">
         <link rel="stylesheet" href="../libs/font-awesome/css/all.min.css">
+        <link rel="stylesheet" href="../CSS/page.css">
         <script src="../libs/vue/vue.global.js"></script>
         <script src="../JS/file-browser.js"></script>
-        <style>
-            .file-browser {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            .file-browser-header {
-                background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                    url('../Picture/header-pic.jpeg') center/cover no-repeat;
-                padding: 40px 20px;
-                text-align: center;
-                color: white;
-                margin: -20px -20px 20px -20px;
-                border-radius: 0;
-            }
-            .file-browser-header h1 {
-                font-size: 2.5rem;
-                margin-bottom: 10px;
-            }
-            .file-browser-header p {
-                font-size: 1rem;
-                opacity: 0.9;
-                max-width: 600px;
-                margin: 0 auto;
-            }
-            .nav-back {
-                margin-bottom: 25px;
-                padding: 10px 0;
-                border-bottom: 1px solid #dee2e6;
-            }
-            .nav-back a {
-                color: #333;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                border-radius: 4px;
-                transition: all 0.3s ease;
-            }
-            .nav-back a:hover {
-                background-color: #f8f9fa;
-                color: darkgreen;
-                transform: translateX(-5px);
-            }
-            .breadcrumb {
-                margin-bottom: 20px;
-                font-size: 14px;
-                color: #666;
-                padding: 12px 16px;
-                background-color: transparent;
-                border-radius: 0;
-                border: none;
-            }
-            .breadcrumb a {
-                color: #0366d6;
-                text-decoration: none;
-                cursor: pointer;
-                padding: 2px 4px;
-                border-radius: 3px;
-            }
-            .breadcrumb a:hover {
-                text-decoration: underline;
-                background-color: rgba(0, 0, 0, 0.05);
-            }
-            .breadcrumb .separator {
-                margin: 0 8px;
-                color: #6c757d;
-            }
-            .controls-bar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-                padding: 15px;
-                background-color: transparent;
-                border-radius: 0;
-                border: none;
-            }
-            .search-box {
-                flex: 1;
-                max-width: 400px;
-                position: relative;
-            }
-            .search-box input {
-                width: 100%;
-                padding: 10px 15px 10px 40px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                font-size: 14px;
-                transition: all 0.3s;
-            }
-            .search-box input:focus {
-                outline: none;
-                border-color: #80bdff;
-                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-            }
-            .search-box i {
-                position: absolute;
-                left: 15px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #6c757d;
-            }
-            .sort-controls {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-            .sort-controls button {
-                padding: 8px 16px;
-                background-color: transparent;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                transition: all 0.3s;
-            }
-            .sort-controls button:hover {
-                background-color: rgba(0, 0, 0, 0.05);
-                border-color: #999;
-            }
-            .sort-controls button.active {
-                background-color: #007bff;
-                color: white;
-                border-color: #007bff;
-            }
-            .content-area {
-                display: flex;
-                gap: 30px;
-                margin-top: 20px;
-            }
-            .directory-tree {
-                flex: 0 0 250px;
-                background-color: transparent;
-                border-radius: 0;
-                padding: 20px;
-                border: none;
-                max-height: 600px;
-                overflow-y: auto;
-            }
-            .tree-item {
-                padding: 10px 12px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                border-radius: 6px;
-                margin-bottom: 5px;
-                transition: all 0.2s;
-            }
-            .tree-item:hover {
-                background-color: rgba(0, 0, 0, 0.05);
-                transform: translateX(5px);
-            }
-            .tree-item i {
-                margin-right: 10px;
-                width: 20px;
-                text-align: center;
-            }
-            .tree-item.folder i {
-                color: #ff6b6b;
-            }
-            .tree-item.file i {
-                color: #4dabf7;
-            }
-            .file-list-container {
-                flex: 1;
-                background-color: transparent;
-                border-radius: 0;
-                border: none;
-                overflow: hidden;
-            }
-            .file-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            .file-table th {
-                text-align: left;
-                padding: 16px 12px;
-                border-bottom: 1px solid #eee;
-                color: #495057;
-                font-weight: 600;
-                background-color: transparent;
-            }
-            .file-table td {
-                padding: 14px 12px;
-                border-bottom: 1px solid #eee;
-            }
-            .file-table tr:hover {
-                background-color: rgba(0, 0, 0, 0.05);
-            }
-            .file-name {
-                display: flex;
-                align-items: center;
-            }
-            .file-name i {
-                margin-right: 12px;
-                width: 20px;
-                text-align: center;
-            }
-            .file-name a {
-                color: #0366d6;
-                text-decoration: none;
-                cursor: pointer;
-                padding: 2px 4px;
-                border-radius: 3px;
-            }
-            .file-name a:hover {
-                text-decoration: underline;
-                background-color: #e9ecef;
-            }
-            .file-size {
-                color: #6c757d;
-                font-family: 'Consolas', 'Monaco', monospace;
-                font-size: 13px;
-            }
-            .file-date {
-                color: #6c757d;
-                font-size: 13px;
-            }
-            .download-btn {
-                padding: 6px 16px;
-                background-color: #28a745;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 13px;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                transition: all 0.3s;
-            }
-            .download-btn:hover {
-                background-color: #218838;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-            .empty-message {
-                text-align: center;
-                padding: 60px 20px;
-                color: #6c757d;
-            }
-            .empty-message i {
-                font-size: 48px;
-                margin-bottom: 20px;
-                color: #adb5bd;
-            }
-            .loading {
-                text-align: center;
-                padding: 60px 20px;
-                color: #6c757d;
-            }
-            .stats-info {
-                padding: 12px 16px;
-                background-color: transparent;
-                border-top: 1px solid #eee;
-                color: #6c757d;
-                font-size: 13px;
-            }
-            /* 鍒嗛〉鏍峰紡 */
-            .pagination-container {
-                margin-top: 20px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            .pagination {
-                display: flex;
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                gap: 5px;
-            }
-            .page-item {
-                margin: 0 2px;
-            }
-            .page-item a {
-                display: block;
-                padding: 8px 12px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                color: #333;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                background-color: transparent;
-                min-width: 40px;
-                text-align: center;
-            }
-            .page-item a:hover {
-                background-color: rgba(0, 0, 0, 0.05);
-                border-color: #999;
-            }
-            .page-item.active a {
-                background-color: #007bff;
-                color: white;
-                border-color: #007bff;
-            }
-            .page-item.disabled a {
-                color: #999;
-                cursor: not-allowed;
-                background-color: transparent;
-            }
-            .page-item.disabled a:hover {
-                background-color: transparent;
-                border-color: #ccc;
-            }
-            .pagination-info {
-                font-size: 0.9rem;
-                color: #666;
-                margin-top: 5px;
-                text-align: center;
-            }
-            @media (max-width: 768px) {
-                .content-area {
-                    flex-direction: column;
-                }
-                .directory-tree {
-                    max-height: 300px;
-                }
-                .controls-bar {
-                    flex-direction: column;
-                    gap: 15px;
-                }
-                .search-box {
-                    max-width: 100%;
-                }
-                .file-table {
-                    display: block;
-                    overflow-x: auto;
-                }
-            }
-            
-            @media (max-width: 480px) {
-                .file-browser-header h1 {
-                    font-size: 1.8rem;
-                }
-                .file-browser-header p {
-                    font-size: 0.9rem;
-                }
-                .nav-back a {
-                    padding: 6px 12px;
-                    font-size: 0.9rem;
-                }
-                .breadcrumb {
-                    font-size: 12px;
-                    padding: 8px 12px;
-                }
-                .controls-bar {
-                    padding: 10px;
-                }
-                .sort-controls button {
-                    padding: 6px 10px;
-                    font-size: 12px;
-                }
-                .file-table th,
-                .file-table td {
-                    padding: 10px 8px;
-                    font-size: 13px;
-                }
-                .file-name i {
-                    margin-right: 8px;
-                }
-                .download-btn {
-                    padding: 4px 10px;
-                    font-size: 12px;
-                }
-                .pagination .page-item a {
-                    padding: 6px 10px;
-                    min-width: 32px;
-                    font-size: 13px;
-                }
-                .stats-info {
-                    font-size: 12px;
-                }
-            }
-        </style>
     </head>
     <body>
         <div id="file-browser">
             <div class="file-browser">
-                <div class="file-browser-header">
-                    <h1>{{pageTitle}}</h1>
-                    <p>{{pageDescription}}</p>
-                </div>
-                
-                <div class="nav-back">
-                    <a href="../index.html">
-                        <i class="fa-solid fa-arrow-left"></i>
-                        杩斿洖棣栭〉
-                    </a>
-                </div>
-                
                 <div class="breadcrumb" v-if="showBreadcrumb">
                     <a @click="goToRoot">
-                        <i class="fa-solid fa-house"></i> 鏍圭洰褰?                    </a>
+                        <i class="fa-solid fa-house"></i> 根目录
+                    </a>
                     <span class="separator">/</span>
                     <template v-for="(item, index) in breadcrumb">
                         <a @click="goToPath(item.path)" :key="item.path">{{item.name}}</a>
@@ -415,144 +24,172 @@
                 </div>
                 
                 <div class="controls-bar">
+                    <div class="back-control">
+                        <a class="back-btn" href="../index.html" title="返回">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </a>
+                    </div>
+                    <div class="category-control">
+                        <button class="category-toggle" @click.stop="showCategoryDropdown = !showCategoryDropdown">
+                            <i class="fa-solid fa-folder"></i>
+                            <span v-if="selectedCategory">{{selectedCategory}}</span>
+                            <span v-else>全部</span>
+                            <i class="fa-solid" :class="showCategoryDropdown ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                        <div class="category-dropdown" v-if="showCategoryDropdown">
+                            <div class="category-item" @click="clearCategory">全部 ({{ allFiles.length }})</div>
+                            <div class="category-item" v-for="cat in categories" :key="cat" @click="selectCategory(cat)">
+                                {{ cat }} ({{ allFiles.filter(f => f.category === cat).length }})
+                            </div>
+                        </div>
+                    </div>
                     <div class="search-box">
                         <i class="fa-solid fa-search"></i>
                         <input type="text" 
                                v-model="searchQuery" 
-                               placeholder="鎼滅储鏂囦欢鎴栨枃浠跺す..."
+                               placeholder="搜索文件或文件夹..."
                                @input="onSearch">
-                    </div>
-                    <div class="sort-controls">
-                        <button @click="sortByName" :class="{ active: sortOrder === 'name' }">
-                            <i class="fa-solid fa-font"></i> 鍚嶇О
-                        </button>
-                        <button @click="sortBySize" :class="{ active: sortOrder === 'size' }">
-                            <i class="fa-solid fa-weight-hanging"></i> 澶у皬
-                        </button>
-                        <button @click="sortByDate" :class="{ active: sortOrder === 'date' }">
-                            <i class="fa-solid fa-calendar"></i> 鏃ユ湡
-                        </button>
-                        <button @click="toggleSortDirection" class="sort-direction">
-                            <i class="fa-solid" :class="sortAsc ? 'fa-arrow-up-short-wide' : 'fa-arrow-down-wide-short'"></i>
-                        </button>
                     </div>
                 </div>
                 
                 <div class="content-area">
-                    <div class="directory-tree" v-if="showTree && filteredTreeItems.length > 0">
-                        <div v-for="item in filteredTreeItems" :key="item.path" 
-                             class="tree-item" 
-                             :class="item.type"
-                             @click="onTreeItemClick(item)">
-                            <i :class="getTreeIcon(item)"></i>
-                            <span>{{item.name}}</span>
-                        </div>
-                    </div>
                     <div class="file-list-container">
                         <div v-if="loading" class="loading">
                             <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                            <p>姝ｅ湪鍔犺浇鏂囦欢鍒楄〃...</p>
+                            <p>正在加载文件列表...</p>
                         </div>
                         <div v-else-if="filteredItems.length === 0" class="empty-message">
                             <i class="fa-regular fa-folder-open"></i>
-                            <p v-if="searchQuery">鏈壘鍒板尮閰?{{searchQuery}}"鐨勬枃浠舵垨鏂囦欢澶?/p>
-                            <p v-else>姝ょ洰褰曚负绌?/p>
+                            <p v-if="searchQuery">未找到匹配"{{searchQuery}}"的文件或文件夹</p>
+                            <p v-else-if="selectedCategory">该分类下没有文件</p>
+                            <p v-else>当前没有未分类文件</p>
                         </div>
                         <div v-else>
-                            <table class="file-table">
-                                <thead>
-                                    <tr>
-                                        <th>鍚嶇О</th>
-                                        <th>澶у皬</th>
-                                        <th>淇敼鏃ユ湡</th>
-                                        <th>鎿嶄綔</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                     <tr v-for="item in paginatedItems" :key="item.path">
-                                        <td>
-                                            <div class="file-name">
-                                                <i :class="getFileIcon(item)"></i>
-                                                <a v-if="item.type === 'directory'" @click="enterDirectory(item)">
-                                                    {{item.name}}/
-                                                </a>
-                                                <span v-else>{{item.name}}</span>
-                                            </div>
-                                        </td>
-                                        <td class="file-size">{{formatSize(item.size)}}</td>
-                                        <td class="file-date">{{formatDate(item.date)}}</td>
-                                        <td>
-                                            <button v-if="item.type === 'file'" class="download-btn" @click="downloadFile(item)">
-                                                <i class="fa-solid fa-download"></i> 涓嬭浇
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div v-if="!isMobile">
+                                <table class="file-table">
+                                    <thead>
+                                        <tr>
+                                            <th @click="toggleSort('name')">
+                                                <span class="th-sortable">名称
+                                                    <i class="fa-solid sort-indicator" :class="sortOrder === 'name' ? (sortAsc ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-sort'"></i>
+                                                </span>
+                                            </th>
+                                            <th @click="toggleSort('size')">
+                                                <span class="th-sortable">大小
+                                                    <i class="fa-solid sort-indicator" :class="sortOrder === 'size' ? (sortAsc ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-sort'"></i>
+                                                </span>
+                                            </th>
+                                            <th @click="toggleSort('date')">
+                                                <span class="th-sortable">修改日期
+                                                    <i class="fa-solid sort-indicator" :class="sortOrder === 'date' ? (sortAsc ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-sort'"></i>
+                                                </span>
+                                            </th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in paginatedItems" :key="item.name">
+                                            <td>
+                                                <div class="file-name">
+                                                    <i :class="getFileIcon(item)" :style="{ color: getFileIconColor(item) }"></i>
+                                                    <span>{{item.name}}</span>
+                                                </div>
+                                            </td>
+                                            <td class="file-size">{{formatSize(item.size)}}</td>
+                                            <td class="file-date">{{formatDate(item.date)}}</td>
+                                            <td>
+                                                <button v-if="item.type === 'file'" class="download-btn" @click="downloadFile(item)">
+                                                    <i class="fa-solid fa-download"></i> 下载/跳转
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else class="file-cards">
+                                <div class="file-card" v-for="item in paginatedItems" :key="item.name">
+                                    <div class="file-card-left">
+                                        <i :class="getFileIcon(item)" :style="{ color: getFileIconColor(item) }"></i>
+                                        <div class="file-card-body">
+                                            <div class="file-card-name">{{ item.name }}</div>
+                                            <div class="file-card-meta">{{ formatDate(item.date) }} · <span class="file-size">{{ formatSize(item.size) }}</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="file-card-action">
+                                        <button v-if="item.type === 'file'" class="download-btn" @click="downloadFile(item)">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="stats-info">
                                 <i class="fa-solid fa-info-circle"></i>
-                                鍏?{{filteredItems.length}} 涓」鐩?                                <span v-if="searchQuery"> (宸茶繃婊?</span>
+                                共 {{filteredItems.length}} 个项目
+                                <span v-if="searchQuery"> (已分类)</span>
                             </div>
                             <div class="pagination-container" v-if="totalPages > 1">
                                 <ul class="pagination">
                                     <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                                        <a @click="changePage(currentPage - 1)" v-if="currentPage > 1">涓婁竴椤?/a>
-                                        <span v-else>涓婁竴椤?/span>
+                                        <a @click="changePage(currentPage - 1)" v-if="currentPage > 1">上一页</a>
+                                        <span v-else>上一页</span>
                                     </li>
                                     <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
                                         <a @click="changePage(page)">{{ page }}</a>
                                     </li>
                                     <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                                        <a @click="changePage(currentPage + 1)" v-if="currentPage < totalPages">涓嬩竴椤?/a>
-                                        <span v-else>涓嬩竴椤?/span>
+                                        <a @click="changePage(currentPage + 1)" v-if="currentPage < totalPages">下一页</a>
+                                        <span v-else>下一页</span>
                                     </li>
                                 </ul>
                                 <div class="pagination-info">
-                                    绗?{{ currentPage }} 椤碉紝鍏?{{ totalPages }} 椤?                                </div>
+                                    第 {{ currentPage }} 页，共 {{ totalPages }} 页
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <footer class="site-footer">
-                    <div class="footer-content">
-                        <div class="footer-column">
-                            <h4>蹇€熼摼鎺?/h4>
-                            <ul>
-                                <li><a href="../index.html">
-                                    <i class="fa-solid fa-home"></i>棣栭〉</a></li>
-                                <li><a href="../Log/Changelog.md" target="_blank">
-                                    <i class="fa-solid fa-history"></i>鏇存柊鏃ュ織</a></li>
-                            </ul>
-                        </div>
-                        <div class="footer-column">
-                            <h4>鍙嬫儏閾炬帴</h4>
-                            <ul>
-                                <li><a href="https://www.sspu.edu.cn/" target="_blank">
-                                    <i class="fa-solid fa-university"></i>涓婃捣绗簩宸ヤ笟澶у</a></li>
-                                <li><a href="https://www.github.com/" target="_blank">
-                                    <i class="fa-brands fa-github"></i>GitHub</a></li>
-                                <li><a href="https://www.gitee.com/" target="_blank">
-                                    <i class="fa-brands fa-git-alt"></i>Gitee</a></li>
-                            </ul>
-                        </div>
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h4>快速链接</h4>
+                        <ul>
+                            <li><a href="../">
+                                <i class="fa-solid fa-home"></i>首页</a></li>
+                            <li><a href="../Log/Changelog.md" target="_blank">
+                                <i class="fa-solid fa-history"></i>更新日志</a></li>
+                        </ul>
                     </div>
-                    <div class="footer-bottom">
-                        <p>鏉ヨ嚜<a href="" target="_blank">
-                            <i class="fa-solid fa-fan fa-spin"></i>浣滆€?/a></p>
+                    <div class="footer-column">
+                        <h4>友情链接</h4>
+                        <ul>
+                            <li><a href="https://www.sspu.edu.cn/" target="_blank">
+                                <i class="fa-solid fa-university"></i>上海第二工业大学</a></li>
+                            <li><a href="https://www.github.com/" target="_blank">
+                                <i class="fa-brands fa-github"></i>GitHub</a></li>
+                            <li><a href="https://www.gitee.com/" target="_blank">
+                                <i class="fa-brands fa-git-alt"></i>Gitee</a></li>
+                        </ul>
                     </div>
-                </footer>
+                </div>
+                <div class="footer-bottom">
+                    <p>来自<a href="" target="_blank">
+                        <i class="fa-solid fa-fan fa-spin"
+                            ></i>作者</a></p>
+                </div>
+            </footer>
             </div>
         </div>
         <script>
-            // 椤甸潰閰嶇疆
             window.pageConfig = {
-                dataUrl: './Control.json', // JSON鏁版嵁鏂囦欢璺緞
-                title: '控制理论与自动化',       // 页面标题
-                description: '提供控制理论与自动化相关文件下载服务', // 页面描述
-                showTree: true,         // 鏄惁鏄剧ず鐩綍鏍?                showBreadcrumb: true    // 鏄惁鏄剧ず闈㈠寘灞戝鑸?            };
+                dataUrl: '../Data/Control.json', // JSON数据文件路径
+                title: '控制相关 - 文件下载',       // 页面标题
+                description: '控制工程文件下载', // 页面描述
+                showTree: true,         // 是否显示目录树
+                showBreadcrumb: false    // 是否显示面包屑导航
+            };
             
-            // 鍒涘缓鏂囦欢娴忚鍣ㄥ簲鐢?            document.addEventListener('DOMContentLoaded', function() {
+            // 创建文件浏览器应用
+            document.addEventListener('DOMContentLoaded', function() {
                 FileBrowser.createApp('#file-browser', window.pageConfig);
             });
         </script>

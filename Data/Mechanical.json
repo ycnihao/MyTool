@@ -1,0 +1,15 @@
+{
+    "name": "机械工程",
+    "type": "directory",
+    "path": "/",
+    "children": [
+        {
+            "name": "机械工程wiki百科.html",
+            "type": "file",
+            "category": "机械工程",
+            "size": 251,
+            "date": "2026-04-20",
+            "url": "https://zh.wikipedia.org/wiki/%E6%9C%BA%E6%A2%B0%E5%B7%A5%E7%A8%8B"
+        }
+    ]
+}

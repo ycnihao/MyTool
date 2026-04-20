@@ -1,0 +1,15 @@
+{
+    "name": "英语",
+    "type": "directory",
+    "path": "/",
+    "children": [
+        {
+            "name": "英语wiki百科.html",
+            "type": "file",
+            "category": "英语",
+            "size": 21,
+            "date": "2026-04-20",
+            "url": "https://zh.wikipedia.org/zh-cn/%E8%8B%B1%E8%AF%AD"
+        }
+    ]
+}

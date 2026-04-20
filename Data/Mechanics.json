@@ -1,0 +1,15 @@
+{
+    "name": "力学",
+    "type": "directory",
+    "path": "/",
+    "children": [
+        {
+            "name": "力学wiki百科.html",
+            "type": "file",
+            "category": "力学",
+            "size": 251,
+            "date": "2026-04-20",
+            "url": "https://zh.wikipedia.org/wiki/%E5%8A%9B%E5%AD%A6"
+        }
+    ]
+}
